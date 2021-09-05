@@ -2,6 +2,14 @@
 set -x
 set -eo pipefail
 
+if ! [ -x "$(command -v sqlx)"]; then
+  echo >&2 "Error: `sqlx` is not installed."
+  echo >&2 "Use:"
+  echo >&2 "    cargo install sqlx-cli --no-default-features --features postgres"
+  echo >&2 "to install it."
+  exit 1
+fi
+
 DB_USER=${POSTGRES_USER:=postgres}
 DB_PASSWORD="${POSTGRES_PASSWORD:=password}"
 DB_NAME="${POSTGRES_DB:=newsletter}"

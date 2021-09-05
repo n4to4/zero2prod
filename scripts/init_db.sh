@@ -25,10 +25,12 @@ then
     --name postgres \
     -d postgres \
     postgres -N 1000
+  PSQL="docker exec -it postgres psql"
+else
+  PSQL=psql
 fi
 
 export PGPASSWORD="${DB_PASSWORD}"
-PSQL="docker exec -it postgres psql"
 
 until $PSQL -h "localhost" -U "${DB_USER}" -p "${DB_PORT}" -d "postgres" -c '\q'; do
   >&2 echo "Posgres is still unavailable - sleeping"

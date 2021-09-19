@@ -58,7 +58,9 @@ pub fn get_configuration() -> Result<Settings, config::ConfigError> {
         config::File::from(configuration_directory.join(environment.as_str())).required(true),
     )?;
 
-    settings.merge(config::File::with_name("configuration"))?;
+    // e.g. `APP_APPLICATION__PORT=5001` would set `Settings.application.port`
+    settings.merge(config::Environment::with_prefix("app").separator("__"))?;
+
     settings.try_into()
 }
 

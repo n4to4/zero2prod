@@ -1,6 +1,9 @@
 use crate::domain::SubscriberEmail;
+use reqwest::Client;
 
 pub struct EmailClient {
+    http_client: Client,
+    base_url: String,
     sender: SubscriberEmail,
 }
 

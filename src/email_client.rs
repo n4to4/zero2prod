@@ -8,6 +8,14 @@ pub struct EmailClient {
 }
 
 impl EmailClient {
+    pub fn new(base_url: String, sender: SubscriberEmail) -> Self {
+        EmailClient {
+            http_client: Client::new(),
+            base_url,
+            sender,
+        }
+    }
+
     pub async fn send_email(
         &self,
         recipent: SubscriberEmail,

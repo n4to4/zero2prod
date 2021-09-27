@@ -59,7 +59,7 @@ pub async fn get_connection_pool(configuration: &DatabaseSettings) -> Result<PgP
         .await
 }
 
-pub fn run(
+fn run(
     listener: TcpListener,
     db_pool: PgPool,
     email_client: EmailClient,

@@ -54,6 +54,10 @@ pub async fn subscribe(
     HttpResponse::Ok().finish()
 }
 
+#[tracing::instrument(
+    name = "Send a confirmation email to a new subscriber",
+    skip(email_client, new_subscriber)
+)]
 async fn send_confirmation_email(
     email_client: &EmailClient,
     new_subscriber: NewSubscriber,
@@ -83,7 +87,7 @@ pub async fn insert_subscriber(
 ) -> Result<(), sqlx::Error> {
     sqlx::query!(
         r#"INSERT INTO subscriptions (id, email, name, subscribed_at, status)
-        VALUES ($1, $2, $3, $4, 'confirmed')"#,
+        VALUES ($1, $2, $3, $4, 'pending_confirmation')"#,
         Uuid::new_v4(),
         new_subscriber.email.as_ref(),
         new_subscriber.name.as_ref(),

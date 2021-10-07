@@ -1,6 +1,7 @@
 use actix_web::{web, HttpResponse};
 
 #[derive(serde::Deserialize)]
+#[allow(dead_code)]
 pub struct Parameters {
     subscription_token: String,
 }

@@ -6,7 +6,6 @@ use chrono::Utc;
 use rand::distributions::Alphanumeric;
 use rand::{thread_rng, Rng};
 use sqlx::{PgPool, Postgres, Transaction};
-use std::convert::{TryFrom, TryInto};
 use uuid::Uuid;
 
 #[derive(Debug, serde::Deserialize)]

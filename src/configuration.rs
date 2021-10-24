@@ -1,7 +1,6 @@
 use crate::domain::SubscriberEmail;
 use serde_aux::field_attributes::deserialize_number_from_string;
 use sqlx::postgres::{PgConnectOptions, PgSslMode};
-use std::convert::{TryFrom, TryInto};
 
 #[derive(Debug, serde::Deserialize, Clone)]
 pub struct Settings {

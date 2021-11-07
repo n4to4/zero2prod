@@ -118,19 +118,29 @@ async fn validate_credentials(
         .map_err(PublishError::UnexpectedError)?
         .ok_or_else(|| PublishError::AuthError(anyhow::anyhow!("Unknown username.")))?;
 
+    actix_web::rt::task::spawn_blocking(move || {
+        verify_password_hash(expected_password_hash, credentials.password)
+    })
+    .await
+    .context("Failed to spawn blocking task.")
+    .map_err(PublishError::UnexpectedError)??;
+
+    Ok(user_id)
+}
+
+#[tracing::instrument(name = "", skip(expected_password_hash, password_candidate))]
+fn verify_password_hash(
+    expected_password_hash: String,
+    password_candidate: String,
+) -> Result<(), PublishError> {
     let expected_password_hash = PasswordHash::new(&expected_password_hash)
         .context("Failed to parse hash in PHC string format.")
         .map_err(PublishError::UnexpectedError)?;
 
-    tracing::info_span!("Verify password hash")
-        .in_scope(|| {
-            Argon2::default()
-                .verify_password(credentials.password.as_bytes(), &expected_password_hash)
-        })
+    Argon2::default()
+        .verify_password(password_candidate.as_bytes(), &expected_password_hash)
         .context("Invalid password.")
-        .map_err(PublishError::AuthError)?;
-
-    Ok(user_id)
+        .map_err(PublishError::AuthError)
 }
 
 #[tracing::instrument(name = "Get stored credentials", skip(username, pool))]

@@ -2,8 +2,9 @@ use crate::domain::SubscriberEmail;
 use crate::email_client::EmailClient;
 use crate::routes::error_chain_fmt;
 use crate::telemetry::spawn_blocking_with_tracing;
-use actix_web::http::{header, HeaderMap, HeaderValue, StatusCode};
-use actix_web::{web, HttpResponse, ResponseError};
+use actix_web::http::header::{self, HeaderMap, HeaderValue};
+use actix_web::http::StatusCode;
+use actix_web::{web, HttpRequest, HttpResponse, ResponseError};
 use anyhow::Context;
 use argon2::{Argon2, PasswordHash, PasswordVerifier};
 use sqlx::PgPool;
@@ -37,7 +38,7 @@ pub async fn publish_newsletter(
     body: web::Json<BodyData>,
     pool: web::Data<PgPool>,
     email_client: web::Data<EmailClient>,
-    request: web::HttpRequest,
+    request: HttpRequest,
 ) -> Result<HttpResponse, PublishError> {
     let credentials = basic_authentication(request.headers()).map_err(PublishError::AuthError)?;
     tracing::Span::current().record("username", &tracing::field::display(&credentials.username));
